@@ -1,0 +1,2264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ポカスタマイズ - トレカコレクション＆バインダー</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            mint: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              brand: '#a7f3d0',
+              branddark: '#059669',
+            },
+            pink: {
+              50: '#fdf2f8',
+              100: '#fce7f3',
+              200: '#fbcfe8',
+              300: '#f472b6',
+              400: '#e11d48',
+              brand: '#fbcfe8',
+              branddark: '#db2777',
+            }
+          },
+          fontFamily: {
+            magic: ['"Shippori Mincho"', '"Noto Serif JP"', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts for Elegant Serif Style -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Shippori+Mincho:wght@500;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* パステルグラデーション ＆「ポ」の半濁点がくっきり見えるロゴ */
+    .magic-logo {
+      font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+      font-weight: 700;
+      /* 文字間隔を広げて「ポ」の丸みが隣の文字に潰されるのを防ぐ */
+      letter-spacing: 0.06em;
+      font-size: 1.45rem;
+      display: inline-block;
+      position: relative;
+      
+      /* パステルグラデーション（ピンク・パープル・ミント） */
+      background: linear-gradient(135deg, #ff9ebb 0%, #d8b4fe 50%, #81e6d9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      
+      /* 白いクッキリとした縁取り */
+      -webkit-text-stroke: 0.5px #ffffff;
+      
+      /* 視認性を劇的に向上させる、少し濃いパステルパープルのドロップシャドウ */
+      filter: drop-shadow(1.5px 1.5px 1px rgba(107, 33, 168, 0.8)) 
+              drop-shadow(0px 0px 3px rgba(255, 255, 255, 0.9));
+    }
+    
+    /* きらきらラメが散りばめられたエフェクト */
+    .magic-logo::after {
+      content: '✨';
+      position: absolute;
+      font-size: 0.65rem;
+      top: -4px;
+      right: -10px;
+      -webkit-text-fill-color: initial;
+      -webkit-text-stroke: 0;
+      filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+      animation: floatSparkle 2s ease-in-out infinite;
+    }
+
+    @keyframes floatSparkle {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.8; }
+      50% { transform: translateY(-3px) scale(1.2); opacity: 1; }
+    }
+
+    /* 回転するカードアイコン */
+    @keyframes cardRotate {
+      0% { transform: rotateY(0deg); }
+      50% { transform: rotateY(180deg); }
+      100% { transform: rotateY(360deg); }
+    }
+    .rotating-card-icon {
+      perspective: 1000px;
+      display: inline-block;
+    }
+    .rotating-card-inner {
+      width: 42px;
+      height: 56px;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      animation: cardRotate 6s infinite linear;
+    }
+    .rotating-card-front, .rotating-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 8px;
+      border: 2.5px solid #a7f3d0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .rotating-card-front {
+      background: linear-gradient(135deg, #fdf2f8, #f0fdf4);
+    }
+    .rotating-card-back {
+      background: linear-gradient(135deg, #a7f3d0, #fbcfe8);
+      transform: rotateY(180deg);
+    }
+
+    /* ホログラムラメカード効果 */
+    .hologram-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .hologram-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -150%; width: 300%; height: 100%;
+      background: linear-gradient(
+        105deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.1) 30%,
+        rgba(167,243,208,0.25) 40%,
+        rgba(251,207,232,0.25) 50%,
+        rgba(255,255,255,0.4) 60%,
+        rgba(255,255,255,0) 70%
+      );
+      transition: all 0.6s ease;
+      transform: skewX(-15deg);
+      pointer-events: none;
+    }
+    .hologram-card:hover::after {
+      left: 150%;
+    }
+
+    /* カスタムスクロールバー */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a7f3d0;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans">
+
+  <!-- 全体ラッパー（スマホ向けコンテナ） -->
+  <div class="flex flex-col min-h-screen max-w-md mx-auto bg-white shadow-xl border-x border-slate-100 relative pb-20">
+    
+    <!-- ヘッダー -->
+    <header class="bg-white border-b border-pink-100 sticky top-0 z-40 px-4 py-3 flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-2">
+        <div class="rotating-card-icon">
+          <div class="rotating-card-inner">
+            <div class="rotating-card-front">
+              <!-- 人のシルエット -->
+              <i class="fa-solid fa-user-astronaut text-pink-400 text-lg"></i>
+            </div>
+            <div class="rotating-card-back">
+              <i class="fa-solid fa-sparkles text-mint-branddark text-lg"></i>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <h1 class="magic-logo">ポカスタマイズ</h1>
+          <span class="text-[9px] text-slate-400 font-bold tracking-widest pl-0.5">IDOL TRADING CARD CLUB</span>
+        </div>
+      </div>
+
+      <!-- 右上プロフィール -->
+      <button onclick="openProfileModal()" class="flex items-center gap-1.5 bg-pink-50 hover:bg-pink-100 px-2 py-1 rounded-full border border-pink-200 transition-all">
+        <img id="header-avatar" class="w-7 h-7 rounded-full object-cover border border-white shadow-sm bg-pink-100" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f472b6'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>" alt="ユーザー">
+        <span id="header-username" class="text-xs font-bold text-slate-700 truncate max-w-[65px]">プロデューサー</span>
+      </button>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main id="main-content" class="flex-1 p-4 overflow-y-auto">
+
+      <!-- ==================== TAB 1: CARD BOOK ==================== -->
+      <section id="sec-cardbook" class="space-y-4">
+        
+        <!-- プロファイルカード -->
+        <div class="bg-gradient-to-r from-mint-50 to-pink-50 p-4 rounded-2xl border border-pink-100 flex items-center justify-between shadow-sm relative overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-pink-200/20 rounded-full blur-xl"></div>
+          <div class="absolute -left-6 -top-6 w-24 h-24 bg-mint-200/20 rounded-full blur-xl"></div>
+          
+          <div class="flex items-center gap-3 relative z-10">
+            <div class="relative group">
+              <img id="user-profile-avatar" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md bg-white cursor-pointer" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f472b6'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>">
+              <div onclick="openProfileModal()" class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                <i class="fa-solid fa-pen text-white text-xs"></i>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span id="user-profile-name" class="font-bold text-slate-800 text-sm">マイコレクション</span>
+                <button onclick="openProfileModal()" class="text-xs text-slate-400 hover:text-pink-500"><i class="fa-solid fa-pen-to-square"></i></button>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5">総所持数: <span id="total-card-count" class="font-bold text-pink-500">0</span>枚</p>
+            </div>
+          </div>
+          
+          <button onclick="switchTab('sec-create')" class="bg-gradient-to-r from-pink-400 to-pink-300 hover:from-pink-500 hover:to-pink-400 text-white font-bold py-2 px-3 rounded-full text-xs shadow-md transition-all flex items-center gap-1">
+            <i class="fa-solid fa-camera"></i>スキャン
+          </button>
+        </div>
+
+        <!-- タブ切り替え -->
+        <div class="flex bg-slate-100 p-1 rounded-xl">
+          <button onclick="setCardBookFilter('my')" id="btn-filter-my" class="flex-1 text-center py-2 text-xs font-bold rounded-lg bg-white text-slate-800 shadow-sm transition-all">
+            <i class="fa-solid fa-camera-retro mr-1 text-mint-branddark"></i>自分で登録したカード
+          </button>
+          <button onclick="setCardBookFilter('traded')" id="btn-filter-traded" class="flex-1 text-center py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-700 transition-all">
+            <i class="fa-solid fa-shuffle mr-1 text-pink-400"></i>交換で得たカード
+          </button>
+        </div>
+
+        <!-- グリッドリスト -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 id="cardbook-title" class="font-bold text-xs text-slate-600">登録カード (0)</h3>
+            <select id="cardbook-sort" onchange="renderCardGrid()" class="text-xs bg-slate-50 border border-slate-200 rounded px-1.5 py-1 text-slate-600 focus:outline-none">
+              <option value="newest">新しい順</option>
+              <option value="rare">レア度順</option>
+              <option value="name">アイドル名順</option>
+            </select>
+          </div>
+
+          <!-- 空の状態 -->
+          <div id="cardbook-empty" class="text-center py-12 px-4 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+            <div class="w-12 h-12 bg-pink-100 text-pink-400 rounded-full flex items-center justify-center mx-auto mb-3 text-lg">
+              <i class="fa-solid fa-image"></i>
+            </div>
+            <p class="text-xs font-bold text-slate-600">カードが登録されていません</p>
+            <p class="text-[10px] text-slate-400 mt-1 max-w-[220px] mx-auto">カメラで本物のトレカを撮影して読み込み、カードを増やしましょう！</p>
+            <button onclick="switchTab('sec-create')" class="mt-3 inline-flex items-center gap-1 bg-mint-200 text-mint-branddark hover:bg-mint-300 px-3 py-1.5 rounded-full text-xs font-bold transition-all">
+              <i class="fa-solid fa-camera"></i>スキャンを試す
+            </button>
+          </div>
+
+          <!-- カードグリッド -->
+          <div id="cardbook-grid" class="grid grid-cols-2 gap-3">
+            <!-- カードが入ります -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 2: CAMERA SCAN & ADJUST ==================== -->
+      <section id="sec-create" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <h2 class="font-bold text-slate-800 flex items-center gap-1.5 text-sm">
+            <span class="p-1.5 bg-mint-100 text-mint-branddark rounded-lg text-xs"><i class="fa-solid fa-camera"></i></span>
+            カードの撮影・トリミング
+          </h2>
+          <button onclick="switchTab('sec-cardbook')" class="text-xs text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark mr-1"></i>閉じる</button>
+        </div>
+
+        <!-- 読み込みプレビュー & 操作エリア -->
+        <div class="bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 relative">
+          <div class="w-full aspect-[2.5/3.5] relative bg-slate-900 flex items-center justify-center overflow-hidden" id="scanner-container">
+            <div class="absolute inset-0 border-4 border-black/40 pointer-events-none z-10 flex items-center justify-center">
+              <div class="w-[85%] h-[85%] border-2 border-dashed border-mint-300 rounded-xl relative shadow-[0_0_0_9999px_rgba(0,0,0,0.4)]">
+                <span class="absolute -top-6 left-1/2 -translate-x-1/2 bg-mint-400 text-white text-[9px] px-2 py-0.5 rounded-full font-bold">トリミング枠</span>
+              </div>
+            </div>
+
+            <canvas id="crop-canvas" class="w-full h-full object-contain cursor-move touch-none"></canvas>
+
+            <div id="scanner-placeholder" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-20">
+              <i class="fa-solid fa-expand text-4xl text-mint-200 animate-pulse mb-3"></i>
+              <p class="text-xs font-bold text-white">画像を選択、またはカメラを全画面起動</p>
+              <p class="text-[10px] text-slate-400 mt-2">トリミング枠内に収まるようにトレカを当てはめてください</p>
+            </div>
+          </div>
+
+          <div class="bg-white p-3 border-t border-slate-200 space-y-2">
+            <div class="flex items-center justify-between text-xs text-slate-600">
+              <span class="font-bold"><i class="fa-solid fa-crop-simple mr-1 text-mint-branddark"></i>トリミング微調整</span>
+              <button onclick="resetCropTransform()" class="text-pink-500 hover:underline text-[10px]"><i class="fa-solid fa-arrow-rotate-left mr-0.5"></i>リセット</button>
+            </div>
+
+            <div class="grid grid-cols-1 gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] w-10 text-slate-500">ズーム</span>
+                <input type="range" id="input-scale" min="0.1" max="3" step="0.05" value="1" oninput="drawCanvas()" class="w-full accent-pink-400 h-1.5 bg-slate-100 rounded-lg appearance-none">
+                <span id="label-scale" class="text-[10px] w-8 text-right text-slate-600">1.0x</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] w-10 text-slate-500">角度</span>
+                <input type="range" id="input-rotate" min="-180" max="180" step="1" value="0" oninput="drawCanvas()" class="w-full accent-mint-400 h-1.5 bg-slate-100 rounded-lg appearance-none">
+                <span id="label-rotate" class="text-[10px] w-8 text-right text-slate-600">0°</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl mt-1">
+              <span class="text-[10px] text-slate-500 font-bold">微細な位置調整</span>
+              <div class="flex gap-1">
+                <button onclick="moveCropOffset(-10, 0)" class="w-7 h-7 rounded bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-xs text-slate-600"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="flex flex-col gap-1">
+                  <button onclick="moveCropOffset(0, -10)" class="w-7 h-7 rounded bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-xs text-slate-600"><i class="fa-solid fa-arrow-up"></i></button>
+                  <button onclick="moveCropOffset(0, 10)" class="w-7 h-7 rounded bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-xs text-slate-600"><i class="fa-solid fa-arrow-down"></i></button>
+                </div>
+                <button onclick="moveCropOffset(10, 0)" class="w-7 h-7 rounded bg-white border border-slate-200 active:bg-slate-100 flex items-center justify-center text-xs text-slate-600"><i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- インプットトリガー -->
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="openFullscreenCamera()" class="flex items-center justify-center gap-1 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition-all">
+            <i class="fa-solid fa-video"></i>全画面カメラ起動
+          </button>
+          <div class="relative">
+            <input type="file" id="file-uploader" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleImageUpload(event)">
+            <button class="w-full flex items-center justify-center gap-1 py-2 bg-pink-100 hover:bg-pink-200 text-pink-700 font-bold rounded-xl text-xs transition-all">
+              <i class="fa-solid fa-image"></i>画像ライブラリ
+            </button>
+          </div>
+        </div>
+
+        <!-- カードプロパティ設定 -->
+        <div class="bg-pink-50/50 p-4 rounded-2xl border border-pink-100 space-y-3">
+          <h3 class="font-bold text-xs text-slate-700 border-b border-pink-100 pb-1 flex items-center gap-1">
+            <i class="fa-solid fa-tag text-pink-400"></i> カード情報の入力
+          </h3>
+          
+          <div class="space-y-2">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 mb-0.5">カードタイトル *</label>
+              <input type="text" id="card-input-title" placeholder="例: 桜吹雪のステージ" class="w-full text-xs px-2.5 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-pink-300">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">アーティスト/アイドル名 *</label>
+                <input type="text" id="card-input-idol" placeholder="例: 神楽坂 美海" class="w-full text-xs px-2.5 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-pink-300">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-1">グループ名</label>
+                <input type="text" id="card-input-group" placeholder="例: Luminous!" class="w-full text-xs px-2.5 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-pink-300">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-0.5">レアリティ</label>
+                <select id="card-input-rarity" class="w-full text-xs px-2 py-2 border border-slate-200 bg-white rounded-lg focus:outline-none">
+                  <option value="N">Normal (N)</option>
+                  <option value="R">Rare (R)</option>
+                  <option value="SR">Super Rare (SR)</option>
+                  <option value="UR" selected>Ultra Rare (UR)</option>
+                  <option value="SEC">Secret (SEC)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-0.5">メモ (一言)</label>
+                <input type="text" id="card-input-memo" placeholder="例: スキャン成功！" class="w-full text-xs px-2.5 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-pink-300">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="saveNewCard()" class="w-full bg-gradient-to-r from-mint-400 to-pink-300 hover:from-mint-500 hover:to-pink-400 text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md transition-all flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-floppy-disk"></i>マイカード帳に追加
+        </button>
+      </section>
+
+      <!-- ==================== TAB 3: BINDER MODE ==================== -->
+      <section id="sec-binder" class="space-y-4 hidden">
+        <div class="bg-gradient-to-r from-mint-50 to-pink-50 p-4 rounded-2xl border border-pink-100 flex items-center justify-between shadow-sm">
+          <div>
+            <h2 class="font-bold text-slate-800 text-sm flex items-center gap-1">
+              <i class="fa-solid fa-book-open text-mint-branddark"></i> バインダーモード
+            </h2>
+            <p class="text-[10px] text-slate-500 mt-0.5">1ページ4枚（2×2）のバインダーを何ページでも作成。スワイプで閲覧・配置できます。</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between bg-slate-100 p-2 rounded-xl text-xs">
+          <div class="flex items-center gap-2">
+            <button onclick="prevBinderPage()" class="px-2 py-1 bg-white hover:bg-slate-200 rounded font-bold shadow-sm"><i class="fa-solid fa-chevron-left"></i></button>
+            <span class="font-bold" id="binder-page-indicator">1 / 1 ページ</span>
+            <button onclick="nextBinderPage()" class="px-2 py-1 bg-white hover:bg-slate-200 rounded font-bold shadow-sm"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+          
+          <div class="flex items-center gap-1.5">
+            <button onclick="addBinderPage()" class="px-2.5 py-1.5 bg-mint-200 hover:bg-mint-300 text-mint-branddark font-bold rounded shadow-sm text-xs"><i class="fa-solid fa-plus mr-1"></i>ページ追加</button>
+          </div>
+        </div>
+
+        <div class="relative w-full overflow-hidden bg-slate-900 rounded-2xl border-4 border-slate-800 p-4 shadow-xl" id="binder-swipe-zone">
+          <div id="binder-page-content" class="grid grid-cols-2 gap-4 aspect-[4/5] w-full transition-transform duration-300 ease-out">
+            <!-- 各ポケット -->
+          </div>
+        </div>
+
+        <button onclick="deleteCurrentBinderPage()" class="w-full text-center py-2 text-[10px] text-red-500 hover:bg-red-50 rounded-lg transition-all font-bold">
+          <i class="fa-solid fa-trash-can mr-1"></i>このバインダーページを削除
+        </button>
+      </section>
+
+      <!-- ==================== TAB 4: TRADE / EXCHANGE ==================== -->
+      <section id="sec-trade" class="space-y-4 hidden">
+        <div class="bg-gradient-to-r from-pink-50 to-mint-50 p-4 rounded-2xl border border-white shadow-sm">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-right-left text-pink-500"></i> オンラインカード自動交換
+          </h2>
+          <p class="text-[10px] text-slate-500 mt-1">「交換に出しても手持ちのカードは減りません！」同じように誰かが交換に出したカードと完全同期トレード。</p>
+        </div>
+
+        <!-- 自分のカードを選択 -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-3">
+          <h3 class="font-bold text-xs text-slate-700 flex items-center justify-between">
+            <span>① 交換に出す自分のカードを選ぶ</span>
+            <span id="selected-card-label" class="text-pink-500 font-bold">未選択</span>
+          </h3>
+
+          <div id="trade-select-scroll" class="flex gap-2.5 overflow-x-auto pb-2 min-h-[90px] items-center">
+            <!-- 持ちカード -->
+          </div>
+          
+          <p class="text-[9px] text-slate-400"><i class="fa-solid fa-info-circle mr-0.5"></i>自撮り登録カード、交換で手に入れたカードのどちらも交換に利用可能です。</p>
+        </div>
+
+        <!-- 交換アクション1: ランダムオート交換 -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-xs text-slate-800 flex items-center gap-1">
+              <span class="w-5 h-5 rounded-full bg-mint-100 text-mint-branddark flex items-center justify-center text-[10px]">A</span>
+              オートランダム交換
+            </h3>
+            <span class="bg-mint-100 text-mint-branddark text-[8px] font-bold px-1.5 py-0.5 rounded">即時同期</span>
+          </div>
+          <p class="text-[10px] text-slate-500 leading-relaxed">他ユーザーが提供したカードとリアルタイムマッチング。誰もプールにいない場合も自動的に登録され、別端末等でマッチングが行われると待機画面が自動的に切り替わります！</p>
+          
+          <button onclick="performRandomTrade()" class="w-full bg-gradient-to-r from-mint-400 to-teal-500 hover:from-mint-500 hover:to-teal-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow transition-all flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-shuffle"></i> ランダム自動交換を実行
+          </button>
+        </div>
+
+        <!-- 交換アクション2: コード交換 -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-2">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-xs text-slate-800 flex items-center gap-1">
+              <span class="w-5 h-5 rounded-full bg-pink-100 text-pink-branddark flex items-center justify-center text-[10px]">B</span>
+              合言葉(コード)で特定交換
+            </h3>
+            <span class="bg-pink-100 text-pink-branddark text-[8px] font-bold px-1.5 py-0.5 rounded">フレンド</span>
+          </div>
+          <p class="text-[10px] text-slate-500 leading-relaxed">専用コードを発行するか、相手が発行したコードを入力します。双方向でリアルタイム監視しているため、どちら側もボタン連打なしで即時に「交換成立！」となります。</p>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="generateTradeCode()" class="py-2 px-3 bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-700 font-bold rounded-xl text-[10px] transition-all flex flex-col items-center justify-center gap-1">
+              <i class="fa-solid fa-key"></i>
+              <span>コードを発行する</span>
+            </button>
+            <button onclick="openUseCodeModal()" class="py-2 px-3 bg-mint-50 hover:bg-mint-100 border border-mint-200 text-mint-branddark font-bold rounded-xl text-[10px] transition-all flex flex-col items-center justify-center gap-1">
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span>相手のコードを使う</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- トレードログ -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <h4 class="font-bold text-[10px] text-slate-500 mb-1.5 uppercase tracking-wide"><i class="fa-solid fa-clock-rotate-left mr-1"></i>交換記録</h4>
+          <div id="trade-history-list" class="space-y-1.5 max-h-[120px] overflow-y-auto text-[10px] text-slate-500">
+            <div class="py-1 italic">まだ交換履歴はありません。</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ==================== LOWER BOTTOM NAVIGATION ==================== -->
+    <nav class="absolute bottom-0 left-0 right-0 h-16 bg-white border-t border-pink-100 flex items-center justify-around px-2 z-40">
+      <button onclick="switchTab('sec-cardbook')" id="nav-cardbook" class="flex flex-col items-center gap-1 text-pink-500">
+        <i class="fa-solid fa-address-book text-lg"></i>
+        <span class="text-[9px] font-bold">カード帳</span>
+      </button>
+
+      <button onclick="switchTab('sec-binder')" id="nav-binder" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+        <i class="fa-solid fa-book-open text-lg"></i>
+        <span class="text-[9px] font-bold">バインダー</span>
+      </button>
+      
+      <button onclick="switchTab('sec-create')" id="nav-create" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+        <i class="fa-solid fa-camera-retro text-lg"></i>
+        <span class="text-[9px] font-bold">スキャン</span>
+      </button>
+
+      <button onclick="switchTab('sec-trade')" id="nav-trade" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+        <i class="fa-solid fa-right-left text-lg"></i>
+        <span class="text-[9px] font-bold">トレード</span>
+      </button>
+    </nav>
+
+    <!-- ==================== FULL SCREEN CAMERA VIEW ==================== -->
+    <div id="fullscreen-camera-overlay" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-between hidden">
+      <div class="w-full flex items-center justify-between px-6 py-4 bg-gradient-to-b from-black/80 to-transparent z-10">
+        <span class="text-white font-bold text-xs"><i class="fa-solid fa-circle-info mr-1 text-mint-brand"></i>枠にカードを合わせて撮影してください</span>
+        <button onclick="closeFullscreenCamera()" class="w-8 h-8 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/40"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
+        <video id="fs-camera-video" class="w-full h-full object-cover" autoplay playsinline></video>
+        <div class="absolute w-[75vw] h-[105vw] max-w-[280px] max-h-[392px] border-4 border-dashed border-pink-400 rounded-2xl pointer-events-none z-10 shadow-[0_0_0_9999px_rgba(0,0,0,0.6)]">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="text-[10px] text-pink-200 font-bold bg-pink-500/80 px-2 py-0.5 rounded-full">ココにカードを合わせる</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full pb-10 pt-6 bg-gradient-to-t from-black/85 to-transparent z-10 flex flex-col items-center gap-4">
+        <button onclick="captureFullscreenPhoto()" class="w-16 h-16 rounded-full border-4 border-white bg-red-500 hover:bg-red-600 active:scale-95 transition-all shadow-lg flex items-center justify-center">
+          <span class="w-12 h-12 rounded-full border border-black/10 bg-white/30"></span>
+        </button>
+        <span class="text-white text-[10px] tracking-widest font-bold">TAP TO SHUTTER</span>
+      </div>
+    </div>
+
+    <!-- ==================== MODALS / DIALOGS ==================== -->
+
+    <!-- カード詳細モーダル -->
+    <div id="card-detail-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl relative border-2 border-pink-100">
+        <button onclick="closeCardDetailModal()" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60"><i class="fa-solid fa-xmark"></i></button>
+        
+        <div class="p-4 bg-gradient-to-b from-white to-pink-50/30">
+          <div id="modal-card-container" class="aspect-[2.5/3.5] w-[70%] mx-auto rounded-2xl overflow-hidden shadow-md border-4 border-white relative bg-slate-100 hologram-card">
+            <span id="modal-card-rarity" class="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-black text-white bg-red-500 shadow z-10">UR</span>
+            <img id="modal-card-img" class="w-full h-full object-cover" src="" alt="カード">
+            <div class="absolute bottom-2 left-2 right-2 bg-black/65 backdrop-blur-xs px-2 py-1.5 rounded-lg text-white">
+              <p id="modal-card-group" class="text-[8px] font-medium opacity-85 leading-tight"></p>
+              <p id="modal-card-idol" class="text-xs font-bold leading-tight"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-5 border-t border-slate-100 space-y-3">
+          <div>
+            <h3 id="modal-card-title" class="font-bold text-base text-slate-800"></h3>
+            <p id="modal-card-source" class="text-[10px] font-bold text-pink-500 mt-0.5"></p>
+          </div>
+
+          <div class="bg-slate-50 p-2.5 rounded-xl text-xs text-slate-600">
+            <span class="font-bold text-[9px] text-slate-400 block mb-0.5">コレクターメモ</span>
+            <p id="modal-card-memo" class="italic"></p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="setMyAvatarFromCurrentCard()" class="py-2 px-3 bg-mint-100 hover:bg-mint-200 text-mint-branddark font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1">
+              <i class="fa-solid fa-user-circle"></i>アイコン化
+            </button>
+            <button onclick="closeCardDetailModal()" class="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs transition-all">
+              閉じる
+            </button>
+          </div>
+          <button id="modal-action-delete" onclick="deleteCurrentCard()" class="w-full py-1.5 bg-red-50 hover:bg-red-100 text-red-500 font-bold rounded-lg text-[9px] transition-all">
+            <i class="fa-solid fa-trash mr-1"></i>カードデータを消去
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- バインダー用カード選択モーダル -->
+    <div id="binder-picker-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl relative border-2 border-mint-100 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-image text-mint-branddark mr-1"></i>配置するカードを選択</h3>
+          <button onclick="closeBinderPickerModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div id="binder-picker-grid" class="grid grid-cols-3 gap-2 max-h-[300px] overflow-y-auto p-1 bg-slate-50 rounded-xl">
+          <!-- 選択候補 -->
+        </div>
+
+        <div class="flex gap-2">
+          <button onclick="clearBinderSlot()" class="flex-1 py-2 bg-red-50 hover:bg-red-100 text-red-500 font-bold rounded-xl text-xs transition-all">
+            <i class="fa-solid fa-eraser mr-1"></i>このポケットを空にする
+          </button>
+          <button onclick="closeBinderPickerModal()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs transition-all">
+            キャンセル
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- プロフィール設定モーダル -->
+    <div id="profile-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl relative border-2 border-mint-100 space-y-4">
+        <h3 class="font-bold text-sm text-slate-800 flex items-center gap-1.5">
+          <i class="fa-solid fa-user-gear text-mint-branddark"></i> ユーザーネーム設定
+        </h3>
+        
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 mb-1">プロデューサーネーム</label>
+            <input type="text" id="profile-input-name" placeholder="お名前" class="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-mint-400">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 mb-1">マイアイコン</label>
+            <div class="flex items-center gap-3">
+              <img id="profile-avatar-preview" class="w-10 h-10 rounded-full object-cover border border-slate-200 shadow-sm" src="">
+              <p class="text-[9px] text-slate-400">手持ちのカード詳細画面から「アイコン化」を押して、お気に入りのアイドルをプロフィールに設定できます。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <button onclick="saveUserProfile()" class="flex-1 py-2 bg-mint-400 hover:bg-mint-500 text-white font-bold rounded-xl text-xs transition-all">
+            変更を保存
+          </button>
+          <button onclick="closeProfileModal()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs transition-all">
+            閉じる
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- コード交換コード発行モーダル -->
+    <div id="trade-code-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl relative border-2 border-pink-100 space-y-4">
+        <h3 class="font-bold text-sm text-slate-800 flex items-center gap-1.5">
+          <i class="fa-solid fa-ticket text-pink-400"></i> 交換パスコード生成
+        </h3>
+        
+        <div class="space-y-1.5 text-center py-2.5 bg-pink-50 rounded-xl">
+          <p class="text-[9px] text-pink-500 font-bold">この合言葉をトレード相手に伝えてください</p>
+          <p id="generated-code-display" class="text-2xl font-black text-pink-600 tracking-widest">------</p>
+          <button onclick="copyTradeCode()" class="text-[10px] font-bold text-pink-500 hover:underline"><i class="fa-solid fa-copy mr-0.5"></i>コピーする</button>
+        </div>
+
+        <div class="text-[11px] text-slate-500 space-y-0.5">
+          <p class="font-bold">提供するトレカ:</p>
+          <p id="trade-code-card-name" class="font-semibold text-slate-800">-</p>
+        </div>
+
+        <div class="bg-yellow-50 p-2.5 rounded-lg border border-yellow-200 text-[10px] text-yellow-800 leading-normal">
+          <p class="font-bold animate-pulse"><i class="fa-solid fa-sync mr-1"></i>相手の参加を待機中...</p>
+          <p class="mt-1">相手がこのコードを入力すると、自動的に画面が切り替わり交換が成立します。同じPCの別タブ同士でもテスト可能です。</p>
+        </div>
+
+        <button onclick="closeTradeCodeModal()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs transition-all">
+          閉じる
+        </button>
+      </div>
+    </div>
+
+    <!-- 相手のコード入力モーダル -->
+    <div id="use-code-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl relative border-2 border-mint-100 space-y-4">
+        <h3 class="font-bold text-sm text-slate-800 flex items-center gap-1.5">
+          <i class="fa-solid fa-right-to-bracket text-mint-branddark"></i> 相手の交換コードを入力
+        </h3>
+        
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 mb-1">合言葉（コード）</label>
+            <input type="text" id="use-code-input" placeholder="例: A9B2C3" class="w-full text-center text-lg font-bold tracking-widest px-3 py-2 border border-slate-200 rounded-lg uppercase focus:outline-none focus:border-mint-400">
+          </div>
+          <p class="text-[9px] text-slate-400">※相手が発行したコードを入力して検証が完了すると、自動的に交換が完了しお互いに相手のカードが付与されます。</p>
+        </div>
+
+        <div class="flex gap-2 pt-1">
+          <button onclick="executeCodeTrade()" class="flex-1 py-2 bg-mint-400 hover:bg-mint-500 text-white font-bold rounded-xl text-xs transition-all">
+            交換を実行
+          </button>
+          <button onclick="closeUseCodeModal()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs transition-all">
+            キャンセル
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- トースト通知 -->
+    <div id="toast-notif" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-800/95 text-white text-xs py-2 px-4 rounded-full shadow-lg z-50 transition-all transform scale-0 flex items-center gap-1.5 whitespace-nowrap">
+      <i class="fa-solid fa-circle-info text-mint-200"></i>
+      <span id="toast-text">メッセージ</span>
+    </div>
+
+  </div>
+
+  <!-- Firebase SDK JS Module -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+    // Global variables & Firebase Setup
+    let app, auth, db;
+    let user = null;
+    let poolUnsubscribe = null;
+    let privateTradeUnsubscribe = null;
+    let localPoolInterval = null;
+    let localPrivateInterval = null;
+    let publicTradePool = []; // グローバル変数 publicTradePool を定義
+    
+    // RULE 1に適合する一意なappId定義
+    const getAppId = () => {
+      return typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    };
+
+    // ハイブリッド環境(Firestore未接続時でも擬似グローバルオンラインとして動作させるためのデバイスUID)
+    const getMyUid = () => {
+      if (user) return user.uid;
+      let devId = localStorage.getItem('pokastamize_device_uid');
+      if (!devId) {
+        devId = 'dev-' + Math.random().toString(36).substring(2, 11);
+        localStorage.setItem('pokastamize_device_uid', devId);
+      }
+      return devId;
+    };
+
+    // アプリ状態
+    let state = {
+      cards: [], 
+      currentTab: 'sec-cardbook',
+      cardBookFilter: 'my', 
+      selectedTradeCardId: null,
+      profile: {
+        username: "きらきらプロデューサー",
+        avatar: ""
+      },
+      selectedCardId: null, 
+      cameraStream: null,
+      cropImage: null,
+      transform: {
+        x: 0,
+        y: 0,
+        scale: 1.0,
+        rotate: 0
+      },
+      isDragging: false,
+      dragStart: { x: 0, y: 0 },
+      tradeHistory: [],
+
+      // バインダーデータ
+      binderPages: [
+        [null, null, null, null] 
+      ],
+      currentBinderPageIndex: 0,
+      activeBinderSlotIndex: null 
+    };
+
+    // Firebase 初期化
+    async function setupFirebase() {
+      try {
+        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+          const firebaseConfig = JSON.parse(__firebase_config);
+          app = initializeApp(firebaseConfig);
+          auth = getAuth(app);
+          db = getFirestore(app);
+
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+
+          onAuthStateChanged(auth, async (currentUser) => {
+            if (currentUser) {
+              user = currentUser;
+              showToast("オンラインサーバーに同期しました！");
+              await loadUserData();
+              listenToPublicTradePool(); 
+            }
+          });
+        } else {
+          console.log("Firebase 設定がないため、模擬オンライン(localStorage)モードで起動します。");
+          loadLocalData();
+          listenToLocalTradePool();
+        }
+      } catch (e) {
+        console.error("Firebase接続失敗。模擬オンライン(localStorage)モードに移行:", e);
+        loadLocalData();
+        listenToLocalTradePool();
+      }
+    }
+
+    // --- データ保存と同期 ---
+    async function loadUserData() {
+      if (!user || !db) return;
+      try {
+        const userDocRef = doc(db, 'artifacts', getAppId(), 'users', user.uid, 'profile', 'data');
+        const userDoc = await getDoc(userDocRef);
+        
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          state.profile = data.profile || state.profile;
+          state.cards = data.cards || [];
+          state.tradeHistory = data.tradeHistory || [];
+          
+          if (data.binderPages) {
+            try {
+              state.binderPages = typeof data.binderPages === 'string'
+                ? JSON.parse(data.binderPages)
+                : data.binderPages;
+            } catch (e) {
+              state.binderPages = [[null, null, null, null]];
+            }
+          } else {
+            state.binderPages = [[null, null, null, null]];
+          }
+          
+          state.currentBinderPageIndex = data.currentBinderPageIndex || 0;
+        } else {
+          state.cards = [];
+          state.profile.username = "プロデューサー#" + user.uid.substring(0, 5);
+          await saveUserDataToFirestore();
+        }
+        applyStateToUI();
+      } catch (err) {
+        console.error("読込失敗:", err);
+        loadLocalData();
+      }
+    }
+
+    async function saveUserDataToFirestore() {
+      const serializedBinderPages = JSON.stringify(state.binderPages);
+
+      if (!user || !db) {
+        localStorage.setItem('pokastamize_local_data', JSON.stringify({
+          profile: state.profile,
+          cards: state.cards,
+          tradeHistory: state.tradeHistory,
+          binderPages: serializedBinderPages,
+          currentBinderPageIndex: state.currentBinderPageIndex
+        }));
+        return;
+      }
+      try {
+        const userDocRef = doc(db, 'artifacts', getAppId(), 'users', user.uid, 'profile', 'data');
+        await setDoc(userDocRef, {
+          profile: state.profile,
+          cards: state.cards,
+          tradeHistory: state.tradeHistory,
+          binderPages: serializedBinderPages, 
+          currentBinderPageIndex: state.currentBinderPageIndex
+        });
+      } catch (err) {
+        console.error("Firestore同期失敗:", err);
+      }
+    }
+
+    function loadLocalData() {
+      const stored = localStorage.getItem('pokastamize_local_data');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          state.profile = parsed.profile || state.profile;
+          state.cards = parsed.cards || [];
+          state.tradeHistory = parsed.tradeHistory || [];
+          
+          if (parsed.binderPages) {
+            try {
+              state.binderPages = typeof parsed.binderPages === 'string'
+                ? JSON.parse(parsed.binderPages)
+                : parsed.binderPages;
+            } catch (e) {
+              state.binderPages = [[null, null, null, null]];
+            }
+          } else {
+            state.binderPages = [[null, null, null, null]];
+          }
+          
+          state.currentBinderPageIndex = parsed.currentBinderPageIndex || 0;
+        } catch(e) {
+          state.cards = [];
+        }
+      } else {
+        state.cards = [];
+      }
+      applyStateToUI();
+    }
+
+    function applyStateToUI() {
+      document.getElementById('header-username').textContent = state.profile.username;
+      
+      const avatarSrc = state.profile.avatar || getDefaultAvatar();
+      document.getElementById('header-avatar').src = avatarSrc;
+      document.getElementById('user-profile-avatar').src = avatarSrc;
+      document.getElementById('profile-avatar-preview').src = avatarSrc;
+
+      document.getElementById('total-card-count').textContent = state.cards.length;
+
+      renderCardGrid();
+      renderTradeSelectScroll();
+      renderTradeHistory();
+      renderBinder();
+    }
+
+    function getDefaultAvatar() {
+      return "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23db2777'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+    }
+
+    // --- タブ遷移 ---
+    window.switchTab = function(tabId) {
+      state.currentTab = tabId;
+      const tabs = ['sec-cardbook', 'sec-create', 'sec-trade', 'sec-binder'];
+      tabs.forEach(t => {
+        const el = document.getElementById(t);
+        if (t === tabId) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+
+      const navs = {
+        'sec-cardbook': 'nav-cardbook',
+        'sec-binder': 'nav-binder',
+        'sec-create': 'nav-create',
+        'sec-trade': 'nav-trade'
+      };
+      Object.keys(navs).forEach(k => {
+        const navEl = document.getElementById(navs[k]);
+        if (k === tabId) {
+          navEl.classList.add('text-pink-500');
+          navEl.classList.remove('text-slate-400', 'hover:text-slate-600');
+        } else {
+          navEl.classList.remove('text-pink-500');
+          navEl.classList.add('text-slate-400', 'hover:text-slate-600');
+        }
+      });
+
+      if (tabId !== 'sec-create') {
+        stopCamera();
+      } else {
+        setTimeout(() => {
+          resizeCanvasToContainer();
+          drawCanvas();
+        }, 100);
+      }
+
+      if (tabId === 'sec-trade') {
+        renderTradeSelectScroll();
+      }
+      if (tabId === 'sec-binder') {
+        renderBinder();
+      }
+    };
+
+    // --- 全画面カメラ機能 ---
+    const fsOverlay = document.getElementById('fullscreen-camera-overlay');
+    const fsVideo = document.getElementById('fs-camera-video');
+
+    window.openFullscreenCamera = async function() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
+          audio: false
+        });
+        state.cameraStream = stream;
+        fsVideo.srcObject = stream;
+        fsVideo.play();
+        fsOverlay.classList.remove('hidden');
+      } catch (err) {
+        console.error("全画面カメラの起動に失敗しました:", err);
+        showToast("カメラを起動できませんでした。ファイルアップロードを使用してください。");
+      }
+    };
+
+    window.closeFullscreenCamera = function() {
+      if (state.cameraStream) {
+        state.cameraStream.getTracks().forEach(track => track.stop());
+        state.cameraStream = null;
+      }
+      fsOverlay.classList.add('hidden');
+    };
+
+    window.captureFullscreenPhoto = function() {
+      if (!state.cameraStream) return;
+
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = fsVideo.videoWidth;
+      tempCanvas.height = fsVideo.videoHeight;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.drawImage(fsVideo, 0, 0);
+
+      const dataUrl = tempCanvas.toDataURL('image/jpeg');
+      closeFullscreenCamera();
+      
+      loadImageToCrop(dataUrl);
+      showToast("撮影しました！位置や倍率を調整してください。");
+    };
+
+    // --- カメラ＆トリミング処理 ---
+    const canvas = document.getElementById('crop-canvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('scanner-container');
+
+    function resizeCanvasToContainer() {
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+    }
+
+    function stopCamera() {
+      if (state.cameraStream) {
+        state.cameraStream.getTracks().forEach(track => track.stop());
+        state.cameraStream = null;
+      }
+    }
+
+    window.handleImageUpload = function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        stopCamera();
+        loadImageToCrop(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    };
+
+    function loadImageToCrop(dataUrl) {
+      document.getElementById('scanner-placeholder').classList.add('hidden');
+
+      const img = new Image();
+      img.onload = function() {
+        state.cropImage = img;
+        resetCropTransform();
+        drawCanvas();
+      };
+      img.src = dataUrl;
+    }
+
+    window.resetCropTransform = function() {
+      state.transform = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        scale: 1.0,
+        rotate: 0
+      };
+      if (state.cropImage) {
+        const scaleX = (canvas.width * 0.8) / state.cropImage.width;
+        const scaleY = (canvas.height * 0.8) / state.cropImage.height;
+        state.transform.scale = Math.min(scaleX, scaleY);
+      }
+      
+      document.getElementById('input-scale').value = state.transform.scale;
+      document.getElementById('label-scale').textContent = state.transform.scale.toFixed(1) + 'x';
+      document.getElementById('input-rotate').value = 0;
+      document.getElementById('label-rotate').textContent = '0°';
+      
+      drawCanvas();
+    };
+
+    window.moveCropOffset = function(dx, dy) {
+      state.transform.x += dx;
+      state.transform.y += dy;
+      drawCanvas();
+    };
+
+    canvas.addEventListener('mousedown', startDrag);
+    canvas.addEventListener('mousemove', drag);
+    canvas.addEventListener('mouseup', endDrag);
+    canvas.addEventListener('mouseleave', endDrag);
+
+    canvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        startDrag({
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+          target: rect
+        });
+      }
+    });
+    canvas.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        drag({
+          clientX: touch.clientX,
+          clientY: touch.clientY
+        });
+      }
+    });
+    canvas.addEventListener('touchend', endDrag);
+
+    function startDrag(e) {
+      if (!state.cropImage) return;
+      state.isDragging = true;
+      state.dragStart = {
+        x: e.clientX - state.transform.x,
+        y: e.clientY - state.transform.y
+      };
+    }
+
+    function drag(e) {
+      if (!state.isDragging || !state.cropImage) return;
+      state.transform.x = e.clientX - state.dragStart.x;
+      state.transform.y = e.clientY - state.dragStart.y;
+      drawCanvas();
+    }
+
+    function endDrag() {
+      state.isDragging = false;
+    }
+
+    window.drawCanvas = function() {
+      if (!state.cropImage) return;
+
+      const scaleInput = parseFloat(document.getElementById('input-scale').value);
+      const rotateInput = parseInt(document.getElementById('input-rotate').value);
+      state.transform.scale = scaleInput;
+      state.transform.rotate = rotateInput;
+      document.getElementById('label-scale').textContent = scaleInput.toFixed(1) + 'x';
+      document.getElementById('label-rotate').textContent = rotateInput + '°';
+
+      ctx.fillStyle = "#1e293b";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      ctx.translate(state.transform.x, state.transform.y);
+      ctx.rotate((state.transform.rotate * Math.PI) / 180);
+      ctx.scale(state.transform.scale, state.transform.scale);
+
+      const w = state.cropImage.width;
+      const h = state.cropImage.height;
+      ctx.drawImage(state.cropImage, -w / 2, -h / 2);
+      ctx.restore();
+    };
+
+    window.saveNewCard = async function() {
+      if (!state.cropImage) {
+        showToast("先にカードを撮影するか画像を選んでください");
+        return;
+      }
+
+      const cardTitle = document.getElementById('card-input-title').value.trim();
+      const idolName = document.getElementById('card-input-idol').value.trim();
+      const groupName = document.getElementById('card-input-group').value.trim() || "未設定";
+      const rarity = document.getElementById('card-input-rarity').value;
+      const memo = document.getElementById('card-input-memo').value.trim() || "メモなし";
+
+      if (!cardTitle || !idolName) {
+        showToast("カードタイトルとアイドル名は必須です");
+        return;
+      }
+
+      const cropW = canvas.width * 0.85;
+      const cropH = canvas.height * 0.85;
+
+      const finalCanvas = document.createElement('canvas');
+      finalCanvas.width = 450;
+      finalCanvas.height = 630;
+      const finalCtx = finalCanvas.getContext('2d');
+
+      finalCtx.fillStyle = '#ffffff';
+      finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+      finalCtx.save();
+      finalCtx.translate(finalCanvas.width / 2, finalCanvas.height / 2);
+      
+      const exportScale = 450 / cropW;
+      const offsetX = (state.transform.x - canvas.width / 2) * exportScale;
+      const offsetY = (state.transform.y - canvas.height / 2) * exportScale;
+      
+      finalCtx.translate(offsetX, offsetY);
+      finalCtx.rotate((state.transform.rotate * Math.PI) / 180);
+      
+      const finalScale = state.transform.scale * exportScale;
+      finalCtx.scale(finalScale, finalScale);
+
+      finalCtx.drawImage(state.cropImage, -state.cropImage.width / 2, -state.cropImage.height / 2);
+      finalCtx.restore();
+
+      const finalImageDataUrl = finalCanvas.toDataURL('image/jpeg', 0.85);
+
+      const newCard = {
+        id: "card-" + Date.now() + "-" + Math.floor(Math.random()*1000),
+        title: cardTitle,
+        idol: idolName,
+        group: groupName,
+        rarity: rarity,
+        memo: memo,
+        image: finalImageDataUrl,
+        source: 'my',
+        createdAt: Date.now()
+      };
+
+      state.cards.unshift(newCard);
+      await saveUserDataToFirestore();
+      
+      showToast("新カードをマイカード帳に追加しました！");
+      
+      document.getElementById('card-input-title').value = "";
+      document.getElementById('card-input-idol').value = "";
+      document.getElementById('card-input-group').value = "";
+      document.getElementById('card-input-memo').value = "";
+      state.cropImage = null;
+      document.getElementById('scanner-placeholder').classList.remove('hidden');
+
+      applyStateToUI();
+      switchTab('sec-cardbook');
+    };
+
+    // --- カード帳描画 ---
+    window.setCardBookFilter = function(filter) {
+      state.cardBookFilter = filter;
+      document.getElementById('btn-filter-my').className = filter === 'my' 
+        ? "flex-1 text-center py-2 text-xs font-bold rounded-lg bg-white text-slate-800 shadow-sm transition-all"
+        : "flex-1 text-center py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-700 transition-all";
+      document.getElementById('btn-filter-traded').className = filter === 'traded'
+        ? "flex-1 text-center py-2 text-xs font-bold rounded-lg bg-white text-slate-800 shadow-sm transition-all"
+        : "flex-1 text-center py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-slate-700 transition-all";
+
+      renderCardGrid();
+    };
+
+    window.renderCardGrid = function() {
+      const grid = document.getElementById('cardbook-grid');
+      const emptyState = document.getElementById('cardbook-empty');
+      grid.innerHTML = "";
+
+      let filtered = state.cards.filter(c => c.source === state.cardBookFilter);
+
+      const sortBy = document.getElementById('cardbook-sort').value;
+      if (sortBy === 'newest') {
+        filtered.sort((a,b) => b.createdAt - a.createdAt);
+      } else if (sortBy === 'rare') {
+        const priority = { 'SEC': 5, 'UR': 4, 'SR': 3, 'R': 2, 'N': 1 };
+        filtered.sort((a,b) => (priority[b.rarity] || 0) - (priority[a.rarity] || 0));
+      } else if (sortBy === 'name') {
+        filtered.sort((a,b) => a.idol.localeCompare(b.idol, 'ja'));
+      }
+
+      document.getElementById('cardbook-title').textContent = `${state.cardBookFilter === 'my' ? '自分で登録したカード' : '交換で得たカード'} (${filtered.length})`;
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+        grid.classList.add('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+      grid.classList.remove('hidden');
+
+      filtered.forEach(card => {
+        const rarityColors = {
+          'N': 'bg-slate-400',
+          'R': 'bg-blue-400',
+          'SR': 'bg-purple-400',
+          'UR': 'bg-pink-500',
+          'SEC': 'bg-yellow-500 border border-yellow-300'
+        };
+
+        const cardEl = document.createElement('div');
+        cardEl.className = "bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm cursor-pointer hover:shadow-md transition-all hologram-card flex flex-col";
+        cardEl.onclick = () => openCardDetailModal(card.id);
+        cardEl.innerHTML = `
+          <div class="aspect-[2.5/3.5] bg-slate-50 relative overflow-hidden">
+            <span class="absolute top-1.5 right-1.5 ${rarityColors[card.rarity] || 'bg-slate-500'} text-[9px] font-black text-white px-1.5 py-0.5 rounded-full z-10 shadow-sm">${card.rarity}</span>
+            <img class="w-full h-full object-cover" src="${card.image}" alt="${card.title}">
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 text-white">
+              <span class="text-[8px] text-pink-200 block truncate font-medium">${card.group}</span>
+              <span class="text-xs font-bold block truncate leading-tight">${card.idol}</span>
+            </div>
+          </div>
+          <div class="p-2 flex-1 flex flex-col justify-between">
+            <h4 class="text-xs font-bold text-slate-800 line-clamp-1 leading-tight">${card.title}</h4>
+            <div class="flex items-center justify-between mt-1 text-[9px] text-slate-400">
+              <span>${card.source === 'my' ? '<i class="fa-solid fa-camera mr-0.5"></i>自撮' : '<i class="fa-solid fa-shuffle mr-0.5"></i>交換'}</span>
+              <span>${new Date(card.createdAt).toLocaleDateString('ja-JP', {month:'numeric', day:'numeric'})}</span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(cardEl);
+      });
+    };
+
+    // --- カード詳細 ---
+    window.openCardDetailModal = function(cardId) {
+      const card = state.cards.find(c => c.id === cardId);
+      if (!card) return;
+      state.selectedCardId = cardId;
+
+      document.getElementById('modal-card-title').textContent = card.title;
+      document.getElementById('modal-card-idol').textContent = card.idol;
+      document.getElementById('modal-card-group').textContent = card.group;
+      document.getElementById('modal-card-rarity').textContent = card.rarity;
+      document.getElementById('modal-card-memo').textContent = card.memo;
+      document.getElementById('modal-card-img').src = card.image;
+      
+      const sourceEl = document.getElementById('modal-card-source');
+      if (card.source === 'my') {
+        sourceEl.innerHTML = '<i class="fa-solid fa-camera mr-1 text-mint-branddark"></i>自分で登録したカード';
+        sourceEl.className = "text-[10px] font-bold text-mint-branddark mt-0.5";
+      } else {
+        sourceEl.innerHTML = '<i class="fa-solid fa-shuffle mr-1 text-pink-500"></i>交換で手に入れたカード';
+        sourceEl.className = "text-[10px] font-bold text-pink-500 mt-0.5";
+      }
+
+      document.getElementById('card-detail-modal').classList.remove('hidden');
+    };
+
+    window.closeCardDetailModal = function() {
+      document.getElementById('card-detail-modal').classList.add('hidden');
+      state.selectedCardId = null;
+    };
+
+    window.setMyAvatarFromCurrentCard = async function() {
+      if (!state.selectedCardId) return;
+      const card = state.cards.find(c => c.id === state.selectedCardId);
+      if (card) {
+        state.profile.avatar = card.image;
+        await saveUserDataToFirestore();
+        applyStateToUI();
+        showToast("マイアイコンを設定しました！");
+        closeCardDetailModal();
+      }
+    };
+
+    window.deleteCurrentCard = async function() {
+      if (!state.selectedCardId) return;
+      if (!confirm("本当にこのカードを削除しますか？バインダーに置かれている場合はそこからも消えます。")) return;
+
+      const targetId = state.selectedCardId;
+      state.cards = state.cards.filter(c => c.id !== targetId);
+      
+      state.binderPages = state.binderPages.map(page => 
+        page.map(c => (c && c.id === targetId) ? null : c)
+      );
+
+      await saveUserDataToFirestore();
+      applyStateToUI();
+      showToast("カードを削除しました。");
+      closeCardDetailModal();
+    };
+
+    // --- プロフィール編集 ---
+    window.openProfileModal = function() {
+      document.getElementById('profile-input-name').value = state.profile.username;
+      const avatarSrc = state.profile.avatar || getDefaultAvatar();
+      document.getElementById('profile-avatar-preview').src = avatarSrc;
+      document.getElementById('profile-modal').classList.remove('hidden');
+    };
+
+    window.closeProfileModal = function() {
+      document.getElementById('profile-modal').classList.add('hidden');
+    };
+
+    window.saveUserProfile = async function() {
+      const newName = document.getElementById('profile-input-name').value.trim();
+      if (!newName) {
+        showToast("名前を入力してください");
+        return;
+      }
+      state.profile.username = newName;
+      await saveUserDataToFirestore();
+      applyStateToUI();
+      closeProfileModal();
+      showToast("変更を反映しました！");
+    };
+
+    // --- バインダーモード実装 ---
+    window.renderBinder = function() {
+      const binderContainer = document.getElementById('binder-page-content');
+      binderContainer.innerHTML = "";
+
+      const currentPage = state.binderPages[state.currentBinderPageIndex] || [null, null, null, null];
+      document.getElementById('binder-page-indicator').textContent = `${state.currentBinderPageIndex + 1} / ${state.binderPages.length} ページ`;
+
+      for (let i = 0; i < 4; i++) {
+        const card = currentPage[i];
+        const slotEl = document.createElement('div');
+        slotEl.className = "bg-slate-800/80 border border-slate-700/60 rounded-xl aspect-[2.5/3.5] relative flex flex-col items-center justify-center cursor-pointer hover:bg-slate-800 overflow-hidden shadow-inner transition-all";
+        slotEl.onclick = () => openBinderPicker(i);
+
+        if (card) {
+          slotEl.innerHTML = `
+            <img src="${card.image}" class="w-full h-full object-cover">
+            <span class="absolute top-1 right-1 bg-black/60 text-white text-[8px] px-1 py-0.5 rounded font-black">${card.rarity}</span>
+            <div class="absolute bottom-0 left-0 right-0 bg-black/60 p-1 text-[8px] text-white truncate text-center font-bold">
+              ${card.idol}
+            </div>
+          `;
+        } else {
+          slotEl.innerHTML = `
+            <div class="text-center p-2 text-slate-500">
+              <i class="fa-solid fa-plus-circle text-lg mb-1 block"></i>
+              <span class="text-[9px]">TAP TO PLACE</span>
+            </div>
+          `;
+        }
+        binderContainer.appendChild(slotEl);
+      }
+    };
+
+    window.openBinderPicker = function(slotIndex) {
+      state.activeBinderSlotIndex = slotIndex;
+      const pickerGrid = document.getElementById('binder-picker-grid');
+      pickerGrid.innerHTML = "";
+
+      if (state.cards.length === 0) {
+        pickerGrid.innerHTML = `<p class="text-[10px] text-slate-400 p-4 col-span-3 text-center">手持ちのカードがありません。スキャンするか交換してください。</p>`;
+      } else {
+        state.cards.forEach(card => {
+          const item = document.createElement('div');
+          item.className = "bg-white p-1 rounded-lg border border-slate-200 cursor-pointer hover:border-mint-400 text-center";
+          item.onclick = () => selectCardForBinder(card);
+          item.innerHTML = `
+            <div class="aspect-[2.5/3.5] rounded overflow-hidden bg-slate-100">
+              <img src="${card.image}" class="w-full h-full object-cover">
+            </div>
+            <p class="text-[8px] font-bold truncate mt-1 text-slate-700">${card.idol}</p>
+          `;
+          pickerGrid.appendChild(item);
+        });
+      }
+
+      document.getElementById('binder-picker-modal').classList.remove('hidden');
+    };
+
+    window.closeBinderPickerModal = function() {
+      document.getElementById('binder-picker-modal').classList.add('hidden');
+      state.activeBinderSlotIndex = null;
+    };
+
+    window.selectCardForBinder = async function(card) {
+      if (state.activeBinderSlotIndex === null) return;
+      
+      const pageIndex = state.currentBinderPageIndex;
+      if (!state.binderPages[pageIndex]) {
+        state.binderPages[pageIndex] = [null, null, null, null];
+      }
+      
+      state.binderPages[pageIndex][state.activeBinderSlotIndex] = card;
+      await saveUserDataToFirestore();
+      applyStateToUI();
+      closeBinderPickerModal();
+      showToast("カードを配置しました");
+    };
+
+    window.clearBinderSlot = async function() {
+      if (state.activeBinderSlotIndex === null) return;
+      const pageIndex = state.currentBinderPageIndex;
+      state.binderPages[pageIndex][state.activeBinderSlotIndex] = null;
+      await saveUserDataToFirestore();
+      applyStateToUI();
+      closeBinderPickerModal();
+      showToast("ポケットを空にしました");
+    };
+
+    window.addBinderPage = async function() {
+      state.binderPages.push([null, null, null, null]);
+      state.currentBinderPageIndex = state.binderPages.length - 1;
+      await saveUserDataToFirestore();
+      applyStateToUI();
+      showToast("新規ページを追加しました");
+    };
+
+    window.deleteCurrentBinderPage = async function() {
+      if (state.binderPages.length <= 1) {
+        showToast("これ以上ページを削除できません");
+        return;
+      }
+      if (!confirm("現在のバインダーページを削除しますか？")) return;
+
+      state.binderPages.splice(state.currentBinderPageIndex, 1);
+      state.currentBinderPageIndex = Math.max(0, state.currentBinderPageIndex - 1);
+      await saveUserDataToFirestore();
+      applyStateToUI();
+      showToast("ページを削除しました");
+    };
+
+    window.prevBinderPage = function() {
+      if (state.currentBinderPageIndex > 0) {
+        state.currentBinderPageIndex--;
+        applyStateToUI();
+      }
+    };
+
+    window.nextBinderPage = function() {
+      if (state.currentBinderPageIndex < state.binderPages.length - 1) {
+        state.currentBinderPageIndex++;
+        applyStateToUI();
+      }
+    };
+
+    let touchStartX = 0;
+    const swipeZone = document.getElementById('binder-swipe-zone');
+    swipeZone.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+
+    swipeZone.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+
+      if (Math.abs(diff) > 50) { 
+        if (diff > 0) {
+          nextBinderPage();
+        } else {
+          prevBinderPage();
+        }
+      }
+    }, {passive: true});
+
+    // --- 双方向・リアルタイム交換トレード機能 ---
+
+    // 1. オンライン接続時のFirestoreリアルタイム監視
+    function listenToPublicTradePool() {
+      if (!db || !user) return; 
+      try {
+        const poolCollection = collection(db, 'artifacts', getAppId(), 'public', 'data', 'trade_pool');
+        onSnapshot(poolCollection, (snapshot) => {
+          publicTradePool = [];
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            publicTradePool.push({
+              docId: doc.id,
+              ...data
+            });
+          });
+        }, (error) => {
+          console.error("プール同期エラー:", error);
+        });
+      } catch (err) {
+        console.error("プール初期化エラー:", err);
+      }
+    }
+
+    // 2. ローカル/模擬オンライン(Firebase未接続時)用の擬似リアルタイム監視
+    // 同じブラウザのローカルストレージに別タブやシークレットウィンドウから登録されたカードデータを安全に共有
+    function listenToLocalTradePool() {
+      if (localPoolInterval) clearInterval(localPoolInterval);
+      localPoolInterval = setInterval(() => {
+        try {
+          const poolData = localStorage.getItem('pokastamize_local_trade_pool');
+          publicTradePool = poolData ? JSON.parse(poolData) : [];
+        } catch (e) {
+          publicTradePool = [];
+        }
+      }, 1000);
+    }
+
+    // ローカル模擬データベースへの同期ヘルパー
+    function syncLocalPoolToStorage() {
+      localStorage.setItem('pokastamize_local_trade_pool', JSON.stringify(publicTradePool));
+    }
+
+    window.renderTradeSelectScroll = function() {
+      const scrollContainer = document.getElementById('trade-select-scroll');
+      scrollContainer.innerHTML = "";
+
+      if (state.cards.length === 0) {
+        scrollContainer.innerHTML = `<div class="text-[10px] text-slate-400 py-4 w-full text-center">トレード可能な手持ちカードがありません</div>`;
+        return;
+      }
+
+      state.cards.forEach(card => {
+        const isSelected = state.selectedTradeCardId === card.id;
+        const cardItem = document.createElement('div');
+        cardItem.className = `flex-shrink-0 w-20 cursor-pointer transition-all ${isSelected ? 'scale-105 border-2 border-pink-500 p-0.5 rounded-lg' : 'opacity-70 hover:opacity-100'}`;
+        cardItem.onclick = () => selectCardForTrade(card.id);
+        cardItem.innerHTML = `
+          <div class="aspect-[2.5/3.5] bg-slate-100 rounded-md overflow-hidden relative shadow-sm">
+            <img class="w-full h-full object-cover" src="${card.image}">
+            <span class="absolute top-0.5 right-0.5 bg-black/50 text-white text-[8px] font-bold px-1 rounded-full">${card.rarity}</span>
+          </div>
+          <p class="text-[8px] font-bold truncate text-slate-700 text-center mt-1">${card.idol}</p>
+        `;
+        scrollContainer.appendChild(cardItem);
+      });
+    };
+
+    window.selectCardForTrade = function(cardId) {
+      state.selectedTradeCardId = cardId;
+      const card = state.cards.find(c => c.id === cardId);
+      if (card) {
+        document.getElementById('selected-card-label').textContent = `「${card.title}」を選択中`;
+      }
+      renderTradeSelectScroll();
+    };
+
+    // A. 双方向オートランダム交換
+    window.performRandomTrade = async function() {
+      if (!state.selectedTradeCardId) {
+        showToast("交換に出す自分のカードを先に選んでください");
+        return;
+      }
+
+      const offerCard = state.cards.find(c => c.id === state.selectedTradeCardId);
+      if (!offerCard) return;
+
+      const myUid = getMyUid();
+      const myUsername = state.profile.username;
+
+      // 1. 公開プール（Firestore or ローカルストレージ）から自分以外のpending状態の出品を探す
+      const validTrades = publicTradePool.filter(trade => trade.userId !== myUid && trade.status === 'pending');
+
+      if (validTrades.length === 0) {
+        // 他人のデータが無い場合：自分が最初の出品登録をしてマッチングを待機する
+        let myDocId = null;
+
+        if (db && user) {
+          // Firebaseでオンライン登録
+          try {
+            const poolCollection = collection(db, 'artifacts', getAppId(), 'public', 'data', 'trade_pool');
+            const myPendingDocRef = await addDoc(poolCollection, {
+              userId: myUid,
+              userName: myUsername,
+              card: {
+                id: offerCard.id,
+                title: offerCard.title,
+                idol: offerCard.idol,
+                group: offerCard.group,
+                rarity: offerCard.rarity,
+                memo: offerCard.memo,
+                image: offerCard.image
+              },
+              status: 'pending',
+              matchedWith: null,
+              createdAt: Date.now()
+            });
+            myDocId = myPendingDocRef.id;
+          } catch (err) {
+            console.error("Firestore出品登録失敗:", err);
+            showToast("オンライン送信に失敗しました");
+            return;
+          }
+        } else {
+          // Firebase未接続時はlocalStorageでデモ＆セルフ複数タブテスト用に安全登録
+          myDocId = "local-pool-" + Date.now();
+          publicTradePool.push({
+            docId: myDocId,
+            userId: myUid,
+            userName: myUsername,
+            card: {
+              id: offerCard.id,
+              title: offerCard.title,
+              idol: offerCard.idol,
+              group: offerCard.group,
+              rarity: offerCard.rarity,
+              memo: offerCard.memo,
+              image: offerCard.image
+            },
+            status: 'pending',
+            matchedWith: null,
+            createdAt: Date.now()
+          });
+          syncLocalPoolToStorage();
+        }
+
+        // 待機画面を起動し、他の参加者が来るのをリアルタイム待機する
+        showTradePendingAnimation(offerCard, myDocId);
+
+      } else {
+        // すでに誰か他の人の有効な実データ出品がある場合：そのカードと確実にマッチングさせる
+        const chosenTrade = validTrades[Math.floor(Math.random() * validTrades.length)];
+
+        if (db && user) {
+          // Firebase オンライン同期
+          try {
+            const targetDocRef = doc(db, 'artifacts', getAppId(), 'public', 'data', 'trade_pool', chosenTrade.docId);
+            await updateDoc(targetDocRef, {
+              status: 'matched',
+              matchedWith: {
+                userId: myUid,
+                userName: myUsername,
+                card: {
+                  id: offerCard.id,
+                  title: offerCard.title,
+                  idol: offerCard.idol,
+                  group: offerCard.group,
+                  rarity: offerCard.rarity,
+                  memo: offerCard.memo,
+                  image: offerCard.image
+                }
+              }
+            });
+          } catch (err) {
+            console.error("マッチングコミット失敗:", err);
+          }
+        } else {
+          // localStorageの模擬オンライン同期
+          const targetIndex = publicTradePool.findIndex(t => t.docId === chosenTrade.docId);
+          if (targetIndex !== -1) {
+            publicTradePool[targetIndex].status = 'matched';
+            publicTradePool[targetIndex].matchedWith = {
+              userId: myUid,
+              userName: myUsername,
+              card: {
+                id: offerCard.id,
+                title: offerCard.title,
+                idol: offerCard.idol,
+                group: offerCard.group,
+                rarity: offerCard.rarity,
+                memo: offerCard.memo,
+                image: offerCard.image
+              }
+            };
+            syncLocalPoolToStorage();
+          }
+        }
+
+        // 自分に他プロデューサーが実際に作成したオリジナルの実カードを付与する
+        const newGainedCard = {
+          id: "card-gained-" + Date.now(),
+          title: chosenTrade.card.title,
+          idol: chosenTrade.card.idol,
+          group: chosenTrade.card.group,
+          rarity: chosenTrade.card.rarity,
+          memo: `[オート交換獲得] 出品者: ${chosenTrade.userName}`,
+          image: chosenTrade.card.image, // 他者が登録した実画像
+          source: 'traded',
+          createdAt: Date.now()
+        };
+
+        state.cards.push(newGainedCard);
+        state.tradeHistory.unshift({
+          id: "hist-" + Date.now(),
+          text: `オート交換成立！「${offerCard.idol}」を提供し、他プロデューサーから「${newGainedCard.idol}」を獲得しました。`,
+          time: Date.now()
+        });
+
+        await saveUserDataToFirestore();
+        applyStateToUI();
+
+        showTradeSuccessAnimation(newGainedCard);
+      }
+    };
+
+    // オートマッチング待機 & 監視アニメーション
+    function showTradePendingAnimation(offerCard, myDocId) {
+      const animDiv = document.createElement('div');
+      animDiv.className = "fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center p-6 text-center";
+      animDiv.innerHTML = `
+        <div class="space-y-6 max-w-sm w-full">
+          <div class="relative inline-block">
+            <div class="w-16 h-16 border-4 border-t-pink-500 border-pink-200 rounded-full animate-spin mx-auto"></div>
+            <i class="fa-solid fa-sync text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-lg animate-pulse"></i>
+          </div>
+
+          <h2 class="magic-logo text-3xl font-black">🌟 MATCHING... 🌟</h2>
+          <p class="text-white text-xs font-bold animate-pulse">公開トレードプールに登録完了</p>
+          
+          <div class="aspect-[2.5/3.5] w-[60%] mx-auto rounded-2xl overflow-hidden border-4 border-pink-400 shadow-lg relative bg-slate-900">
+            <span class="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-black text-white bg-mint-500 shadow z-10">${offerCard.rarity}</span>
+            <img class="w-full h-full object-cover" src="${offerCard.image}">
+            <div class="absolute bottom-2 left-2 right-2 bg-black/60 p-2 rounded text-left text-white text-xs">
+              <p class="text-[8px] opacity-75">${offerCard.group}</p>
+              <p class="font-bold">${offerCard.idol}</p>
+            </div>
+          </div>
+
+          <div class="text-slate-300 text-xs px-2 leading-relaxed">
+            <p class="font-bold text-white">あなたの提供: 「${offerCard.title}」</p>
+            <p class="mt-2 text-slate-400">現在、プールに他ユーザーの新しい出品がありません。この実カードをプールに登録して待機します。他プロデューサーがマッチングに訪れるのを待っています...</p>
+          </div>
+
+          <button id="cancel-pending-btn" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 rounded-xl text-xs transition-all shadow">
+            交換をキャンセルする
+          </button>
+        </div>
+      `;
+
+      document.body.appendChild(animDiv);
+
+      let checkingInterval = null;
+
+      // 双方向リアルタイムの成立チェック
+      if (db && user) {
+        // Firebase オンライン監視
+        const docRef = doc(db, 'artifacts', getAppId(), 'public', 'data', 'trade_pool', myDocId);
+        poolUnsubscribe = onSnapshot(docRef, async (snap) => {
+          if (snap.exists()) {
+            const data = snap.data();
+            if (data.status === 'matched' && data.matchedWith) {
+              const matchedData = data.matchedWith;
+              
+              const newGainedCard = {
+                id: "card-gained-" + Date.now(),
+                title: matchedData.card.title,
+                idol: matchedData.card.idol,
+                group: matchedData.card.group,
+                rarity: matchedData.card.rarity,
+                memo: `[オート交換] 提供者: ${matchedData.userName}`,
+                image: matchedData.card.image, // 相手の実画像
+                source: 'traded',
+                createdAt: Date.now()
+              };
+
+              state.cards.push(newGainedCard);
+              state.tradeHistory.unshift({
+                id: "hist-" + Date.now(),
+                text: `オート交換成立！「${offerCard.idol}」 ⇄ 「${newGainedCard.idol} (${matchedData.userName})」`,
+                time: Date.now()
+              });
+
+              // コミット完了でプールから削除
+              await deleteDoc(docRef);
+              if (poolUnsubscribe) poolUnsubscribe();
+              
+              await saveUserDataToFirestore();
+              applyStateToUI();
+
+              if (document.body.contains(animDiv)) document.body.removeChild(animDiv);
+              showTradeSuccessAnimation(newGainedCard);
+            }
+          }
+        });
+      } else {
+        // Firebase未接続時はlocalStorageデータベースを1秒ごとに監視する
+        checkingInterval = setInterval(async () => {
+          const poolData = localStorage.getItem('pokastamize_local_trade_pool');
+          if (poolData) {
+            const localPool = JSON.parse(poolData);
+            const myData = localPool.find(t => t.docId === myDocId);
+            if (myData && myData.status === 'matched' && myData.matchedWith) {
+              clearInterval(checkingInterval);
+
+              const matchedData = myData.matchedWith;
+              const newGainedCard = {
+                id: "card-gained-" + Date.now(),
+                title: matchedData.card.title,
+                idol: matchedData.card.idol,
+                group: matchedData.card.group,
+                rarity: matchedData.card.rarity,
+                memo: `[オート交換] 提供者: ${matchedData.userName}`,
+                image: matchedData.card.image, // 他者が作った実画像
+                source: 'traded',
+                createdAt: Date.now()
+              };
+
+              state.cards.push(newGainedCard);
+              state.tradeHistory.unshift({
+                id: "hist-" + Date.now(),
+                text: `オート交換成立！「${offerCard.idol}」 ⇄ 「${newGainedCard.idol} (${matchedData.userName})」`,
+                time: Date.now()
+              });
+
+              // 完了したためプールから削除
+              const updatedPool = localPool.filter(t => t.docId !== myDocId);
+              localStorage.setItem('pokastamize_local_trade_pool', JSON.stringify(updatedPool));
+
+              loadLocalData();
+
+              if (document.body.contains(animDiv)) document.body.removeChild(animDiv);
+              showTradeSuccessAnimation(newGainedCard);
+            }
+          }
+        }, 1000);
+      }
+
+      document.getElementById('cancel-pending-btn').onclick = async () => {
+        if (poolUnsubscribe) poolUnsubscribe();
+        if (checkingInterval) clearInterval(checkingInterval);
+
+        if (db && user) {
+          try {
+            await deleteDoc(doc(db, 'artifacts', getAppId(), 'public', 'data', 'trade_pool', myDocId));
+          } catch(e){}
+        } else {
+          const poolData = localStorage.getItem('pokastamize_local_trade_pool');
+          if (poolData) {
+            const updatedPool = JSON.parse(poolData).filter(t => t.docId !== myDocId);
+            localStorage.setItem('pokastamize_local_trade_pool', JSON.stringify(updatedPool));
+          }
+        }
+
+        if (document.body.contains(animDiv)) document.body.removeChild(animDiv);
+        showToast("交換をキャンセルしました");
+      };
+
+      return animDiv;
+    }
+
+    // B. 双方向合言葉コード交換
+    window.generateTradeCode = async function() {
+      if (!state.selectedTradeCardId) {
+        showToast("コードに紐付ける自分のカードを先に選んでください");
+        return;
+      }
+
+      const card = state.cards.find(c => c.id === state.selectedTradeCardId);
+      if (!card) return;
+
+      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const myUid = getMyUid();
+      const myUsername = state.profile.username;
+
+      const tradeData = {
+        code: code,
+        creatorId: myUid,
+        creatorName: myUsername,
+        creatorCard: {
+          id: card.id,
+          title: card.title,
+          idol: card.idol,
+          group: card.group,
+          rarity: card.rarity,
+          memo: card.memo,
+          image: card.image
+        },
+        joinerId: null,
+        joinerName: null,
+        joinerCard: null,
+        status: 'active',
+        createdAt: Date.now()
+      };
+
+      if (db && user) {
+        // Firebase オンライン登録とリアルタイム変更監視
+        try {
+          const tradeDocRef = doc(db, 'artifacts', getAppId(), 'public', 'data', 'private_trades', code);
+          await setDoc(tradeDocRef, tradeData);
+
+          if (privateTradeUnsubscribe) privateTradeUnsubscribe();
+          privateTradeUnsubscribe = onSnapshot(tradeDocRef, async (snap) => {
+            if (snap.exists()) {
+              const data = snap.data();
+              if (data.status === 'completed' && data.joinerCard) {
+                const newGainedCard = {
+                  id: "card-gained-" + Date.now(),
+                  title: data.joinerCard.title,
+                  idol: data.joinerCard.idol,
+                  group: data.joinerCard.group,
+                  rarity: data.joinerCard.rarity,
+                  memo: `[合言葉交換] 相手: ${data.joinerName}`,
+                  image: data.joinerCard.image, // 他者が作った実画像
+                  source: 'traded',
+                  createdAt: Date.now()
+                };
+
+                state.cards.push(newGainedCard);
+                state.tradeHistory.unshift({
+                  id: "hist-" + Date.now(),
+                  text: `合言葉交換成立！「${card.idol}」 ⇄ 「${newGainedCard.idol} (${data.joinerName})」`,
+                  time: Date.now()
+                });
+
+                await deleteDoc(tradeDocRef);
+                if (privateTradeUnsubscribe) privateTradeUnsubscribe();
+
+                document.getElementById('trade-code-modal').classList.add('hidden');
+                await saveUserDataToFirestore();
+                applyStateToUI();
+
+                showTradeSuccessAnimation(newGainedCard);
+              }
+            }
+          });
+        } catch (err) {
+          console.error("Firestoreコード登録エラー:", err);
+          showToast("コードの発行に失敗しました");
+          return;
+        }
+      } else {
+        // Firebase未接続時はlocalStorageデータベースに登録 & ポーリング監視
+        try {
+          const storedTrades = localStorage.getItem('pokastamize_local_private_trades');
+          const privateTrades = storedTrades ? JSON.parse(storedTrades) : {};
+          privateTrades[code] = tradeData;
+          localStorage.setItem('pokastamize_local_private_trades', JSON.stringify(privateTrades));
+
+          if (localPrivateInterval) clearInterval(localPrivateInterval);
+          localPrivateInterval = setInterval(async () => {
+            const currentStored = localStorage.getItem('pokastamize_local_private_trades');
+            if (currentStored) {
+              const currentTrades = JSON.parse(currentStored);
+              const data = currentTrades[code];
+              if (data && data.status === 'completed' && data.joinerCard) {
+                clearInterval(localPrivateInterval);
+
+                const newGainedCard = {
+                  id: "card-gained-" + Date.now(),
+                  title: data.joinerCard.title,
+                  idol: data.joinerCard.idol,
+                  group: data.joinerCard.group,
+                  rarity: data.joinerCard.rarity,
+                  memo: `[合言葉交換] 相手: ${data.joinerName}`,
+                  image: data.joinerCard.image, // 他者が作った実画像
+                  source: 'traded',
+                  createdAt: Date.now()
+                };
+
+                state.cards.push(newGainedCard);
+                state.tradeHistory.unshift({
+                  id: "hist-" + Date.now(),
+                  text: `合言葉交換成立！「${card.idol}」 ⇄ 「${newGainedCard.idol} (${data.joinerName})」`,
+                  time: Date.now()
+                });
+
+                // コミット完了につきプールから削除
+                delete currentTrades[code];
+                localStorage.setItem('pokastamize_local_private_trades', JSON.stringify(currentTrades));
+
+                document.getElementById('trade-code-modal').classList.add('hidden');
+                loadLocalData();
+
+                showTradeSuccessAnimation(newGainedCard);
+              }
+            }
+          }, 1000);
+
+        } catch (e) {
+          console.error("ローカルコード発行エラー:", e);
+        }
+      }
+
+      document.getElementById('generated-code-display').textContent = code;
+      document.getElementById('trade-code-card-name').textContent = `「${card.title} (${card.idol})」`;
+      document.getElementById('trade-code-modal').classList.remove('hidden');
+    };
+
+    // グローバル露出用のウィンドウへのバインド
+    window.openUseCodeModal = function() {
+      if (!state.selectedTradeCardId) {
+        showToast("交換に差し出す自分のカードをあらかじめ選んでください");
+        return;
+      }
+      document.getElementById('use-code-input').value = "";
+      document.getElementById('use-code-modal').classList.remove('hidden');
+    };
+
+    window.closeUseCodeModal = function() {
+      document.getElementById('use-code-modal').classList.add('hidden');
+    };
+
+    // 相手が発行した交換用コードを使用
+    window.executeCodeTrade = async function() {
+      const code = document.getElementById('use-code-input').value.trim().toUpperCase();
+      if (!code) {
+        showToast("コードを入力してください");
+        return;
+      }
+
+      const offerCard = state.cards.find(c => c.id === state.selectedTradeCardId);
+      if (!offerCard) {
+        showToast("提供する自分のカードを先に選んでください");
+        return;
+      }
+
+      let matchedTrade = null;
+      const myUid = getMyUid();
+      const myUsername = state.profile.username;
+
+      // 1. Firebase オンラインロード
+      if (db && user) {
+        try {
+          const tradeDocRef = doc(db, 'artifacts', getAppId(), 'public', 'data', 'private_trades', code);
+          const tradeDoc = await getDoc(tradeDocRef);
+          if (tradeDoc.exists()) {
+            const data = tradeDoc.data();
+            
+            if (data.creatorId === myUid) {
+              showToast("エラー: 自分が発行したコードです。別ウィンドウやシークレットタブでテストしてください。");
+              return;
+            }
+
+            if (data.status === 'active') {
+              matchedTrade = data;
+              // 完了ステータスへ更新
+              await updateDoc(tradeDocRef, {
+                joinerId: myUid,
+                joinerName: myUsername,
+                joinerCard: {
+                  id: offerCard.id,
+                  title: offerCard.title,
+                  idol: offerCard.idol,
+                  group: offerCard.group,
+                  rarity: offerCard.rarity,
+                  memo: offerCard.memo,
+                  image: offerCard.image
+                },
+                status: 'completed'
+              });
+            } else {
+              showToast("エラー: このコードは既に使用されています。");
+              return;
+            }
+          }
+        } catch (err) {
+          console.error("合言葉交換のロード失敗:", err);
+          showToast("データベースの接続に失敗しました");
+          return;
+        }
+      } else {
+        // 2. ローカル模擬オンラインロード
+        try {
+          const storedTrades = localStorage.getItem('pokastamize_local_private_trades');
+          if (storedTrades) {
+            const privateTrades = JSON.parse(storedTrades);
+            const data = privateTrades[code];
+
+            if (data) {
+              if (data.creatorId === myUid) {
+                showToast("エラー: 自分が発行したコードです。別タブやシークレットウィンドウ等でテストしてください。");
+                return;
+              }
+
+              if (data.status === 'active') {
+                matchedTrade = data;
+                
+                privateTrades[code].joinerId = myUid;
+                privateTrades[code].joinerName = myUsername;
+                privateTrades[code].joinerCard = {
+                  id: offerCard.id,
+                  title: offerCard.title,
+                  idol: offerCard.idol,
+                  group: offerCard.group,
+                  rarity: offerCard.rarity,
+                  memo: offerCard.memo,
+                  image: offerCard.image
+                };
+                privateTrades[code].status = 'completed';
+
+                localStorage.setItem('pokastamize_local_private_trades', JSON.stringify(privateTrades));
+              } else {
+                showToast("エラー: このコードは既に使用されています。");
+                return;
+              }
+            }
+          }
+        } catch (e) {
+          console.error("ローカル合言葉トレードエラー:", e);
+        }
+      }
+
+      if (!matchedTrade) {
+        showToast("エラー: コードが見つからないか、有効期限が切れています。");
+        return;
+      }
+
+      // 自分側にも「相手プロデューサーが実際に作って登録したオリジナルカード」を付与
+      const newGainedCard = {
+        id: "card-gained-" + Date.now(),
+        title: matchedTrade.creatorCard.title,
+        idol: matchedTrade.creatorCard.idol,
+        group: matchedTrade.creatorCard.group,
+        rarity: matchedTrade.creatorCard.rarity,
+        memo: `[合言葉交換] 相手: ${matchedTrade.creatorName}`,
+        image: matchedTrade.creatorCard.image, // 他者が作った実画像
+        source: 'traded',
+        createdAt: Date.now()
+      };
+
+      state.cards.push(newGainedCard);
+      state.tradeHistory.unshift({
+        id: "hist-" + Date.now(),
+        text: `合言葉交換成立！「${offerCard.idol}」 ⇄ 「${newGainedCard.idol} (${matchedTrade.creatorName})」`,
+        time: Date.now()
+      });
+
+      closeUseCodeModal();
+      await saveUserDataToFirestore();
+      applyStateToUI();
+
+      showTradeSuccessAnimation(newGainedCard);
+    };
+
+    function showTradeSuccessAnimation(gainedCard) {
+      const animDiv = document.createElement('div');
+      animDiv.className = "fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center p-6 text-center";
+      animDiv.innerHTML = `
+        <div class="space-y-6 max-w-sm w-full">
+          <h2 class="magic-logo text-3xl font-black">🌟 TRADE SUCCESS 🌟</h2>
+          <p class="text-white text-xs font-bold animate-pulse">新しいカードを入手しました！</p>
+          
+          <div class="aspect-[2.5/3.5] w-[65%] mx-auto rounded-2xl overflow-hidden border-4 border-mint-200 shadow-lg relative bg-slate-900 hologram-card">
+            <span class="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-black text-white bg-pink-500 shadow z-10">${gainedCard.rarity}</span>
+            <img class="w-full h-full object-cover" src="${gainedCard.image}">
+            <div class="absolute bottom-2 left-2 right-2 bg-black/60 p-2 rounded text-left text-white text-xs">
+              <p class="text-[8px] opacity-75">${gainedCard.group}</p>
+              <p class="font-bold">${gainedCard.idol}</p>
+            </div>
+          </div>
+
+          <div class="text-slate-300 text-xs">
+            <p class="font-bold text-white">「${gainedCard.title}」</p>
+          </div>
+
+          <button id="close-anim-btn" class="w-full bg-gradient-to-r from-mint-300 to-pink-300 hover:from-mint-400 hover:to-pink-400 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow">
+            カード帳に追加する
+          </button>
+        </div>
+      `;
+
+      document.body.appendChild(animDiv);
+      document.getElementById('close-anim-btn').onclick = () => {
+        document.body.removeChild(animDiv);
+        switchTab('sec-cardbook');
+        setCardBookFilter('traded');
+      };
+    }
+
+    function renderTradeHistory() {
+      const container = document.getElementById('trade-history-list');
+      container.innerHTML = "";
+
+      if (state.tradeHistory.length === 0) {
+        container.innerHTML = `<div class="py-1 italic">まだ交換履歴はありません。</div>`;
+        return;
+      }
+
+      state.tradeHistory.forEach(h => {
+        const dateStr = new Date(h.time).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+        const item = document.createElement('div');
+        item.className = "flex items-start gap-1 py-1 border-b border-slate-100 last:border-0";
+        item.innerHTML = `
+          <span class="text-pink-400 font-bold">[${dateStr}]</span>
+          <span class="flex-1 leading-normal">${h.text}</span>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // --- トーストユーティリティ ---
+    let toastTimeout;
+    window.showToast = function(msg) {
+      const toast = document.getElementById('toast-notif');
+      document.getElementById('toast-text').textContent = msg;
+      
+      toast.classList.remove('scale-0');
+      toast.classList.add('scale-100');
+      
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('scale-100');
+        toast.classList.add('scale-0');
+      }, 3500);
+    };
+
+    // --- 起動初期化 ---
+    window.onload = function() {
+      setupFirebase();
+      resizeCanvasToContainer();
+      window.addEventListener('resize', () => {
+        resizeCanvasToContainer();
+        drawCanvas();
+      });
+    };
+
+  </script>
+</body>
+</html>
