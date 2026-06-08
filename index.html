@@ -1895,6 +1895,15 @@
 
     // B. 双方向合言葉コード交換
     window.generateTradeCode = async function() {
+     window.copyTradeCode = async function() {
+  const code =
+    document.getElementById(
+      'generated-code-display'
+    ).textContent;
+
+  await navigator.clipboard.writeText(code);
+  showToast("コードをコピーしました！");
+};
       if (!state.selectedTradeCardId) {
         showToast("コードに紐付ける自分のカードを先に選んでください");
         return;
