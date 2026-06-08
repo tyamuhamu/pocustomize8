@@ -772,8 +772,38 @@
 
     // Firebase 初期化
     async function setupFirebase() {
-      try {
-        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+  try {
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAvVHEMI5gYgASdh9T9IX3nYht2_2oxTGA",
+      authDomain: "pocustomize-467ad.firebaseapp.com",
+      projectId: "pocustomize-467ad",
+      storageBucket: "pocustomize-467ad.firebasestorage.app",
+      messagingSenderId: "769470360892",
+      appId: "1:769470360892:web:54d4668b01ad9e82298239",
+      measurementId: "G-K0P3K145ZJ"
+    };
+
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+
+    await signInAnonymously(auth);
+
+    onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        user = currentUser;
+        showToast("オンラインサーバーに接続しました！");
+        await loadUserData();
+        listenToPublicTradePool();
+      }
+    });
+
+  } catch (e) {
+    console.error(e);
+    showToast("Firebase接続失敗");
+  }
+}
           const firebaseConfig = JSON.parse(__firebase_config);
           app = initializeApp(firebaseConfig);
           auth = getAuth(app);
