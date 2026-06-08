@@ -809,11 +809,8 @@
           auth = getAuth(app);
           db = getFirestore(app);
 
-          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(auth, __initial_auth_token);
-          } else {
-            await signInAnonymously(auth);
-          }
+          
+      
 
           onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
