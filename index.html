@@ -1875,6 +1875,10 @@
         }, 1000);
       }
 
+      document.getElementById('hide-pending-btn').onclick =
+() => {
+  animDiv.style.display = 'none';
+};
       document.getElementById('cancel-pending-btn').onclick = async () => {
         if (poolUnsubscribe) poolUnsubscribe();
         if (checkingInterval) clearInterval(checkingInterval);
