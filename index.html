@@ -810,7 +810,7 @@
           db = getFirestore(app);
 
           
-      
+      await signInAnonymously(auth);
 
           onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
